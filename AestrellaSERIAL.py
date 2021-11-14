@@ -1,6 +1,19 @@
 import numpy as np
 import time
 
+matriz = [[1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1]]
 
 Nodes = []
 NodesSel = []
@@ -9,14 +22,15 @@ def GetDistance(StartNode, EndNode):
     DistX = abs(StartNode.X - EndNode.X)
     DistY = abs(StartNode.Y - EndNode.Y)
 
-    return np.sqrt((DistX**2) + (DistY**2))
-
     '''
+    return np.sqrt((DistX**2) + (DistY**2))
+    '''
+    
     if DistX > DistY:
         return 14*DistY + 10*(DistX - DistY)
     else:
         return 14*DistX + 10*(DistY - DistX)
-    '''
+    
 
 class Node():
     def __init__(self, parent=None):
@@ -39,9 +53,9 @@ NodesSel.append(Temp)
 print("Inicio:")
 print("Coordenadas nodo inicial:")
 print("X:")
-NodesSel[len(Nodes)-1].X = input()
-print("Y:")
 NodesSel[len(Nodes)-1].Y = input()
+print("Y:")
+NodesSel[len(Nodes)-1].X = input()
 
 current_node = NodesSel[0]     
 
@@ -50,9 +64,9 @@ End_Node = Node(None)
 print("Final:")
 print("Coordenadas nodo final:")
 print("X:")
-End_Node.X = input()
-print("Y:")
 End_Node.Y = input()
+print("Y:")
+End_Node.X = input()
 
 print("buscando")
 
@@ -84,15 +98,21 @@ while True:
         path=[]
         current = current_node
         while current is not None:
+            matriz[current.X][current.Y] = 8
             path.append("[" + str(current.X) + ", " + str(current.Y) + "]")
             current = current.parent
-        print(path)
+        print(path[::-1])
+        print(np.array(matriz))
         break
 
     Children = []
 
     for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
-        if (current_node.X + new_position[0]) < 0 or (current_node.Y + new_position[1]) < 0 or (current_node.X + new_position[0]) >= 50 or (current_node.Y + new_position[1]) >= 50:
+        if (current_node.X + new_position[0]) < 0 or (current_node.Y + new_position[1]) < 0 or (current_node.X + new_position[0]) >= (len(matriz) - 1) or (current_node.Y + new_position[1]) >= (len(matriz[len(matriz)-1])):
+            continue
+
+        # Make sure walkable terrain
+        if matriz[(current_node.X + new_position[0])][(current_node.Y + new_position[1])] != 1:
             continue
 
         New_Node = Node(current_node)
@@ -123,11 +143,10 @@ while True:
 
         #child.h = ((child.X - End_Node.X) ** 2) + ((child.Y - End_Node.Y) ** 2)
         child.h = GetDistance(child, End_Node)
-        child.f = child.g + child.h
+        child.f = child.g + child.h 
 
         for open_node in NodesSel:
             #if child == open_node and child.g > open_node.g:
             if child == open_node and child.g > open_node.g:
                 continue
         NodesSel.append(child)
-            
