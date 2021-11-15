@@ -1,9 +1,5 @@
 import numpy as np
 import time
-import mpi4py
-mpi4py.rc.initialize = False  # do not initialize MPI automatically
-mpi4py.rc.finalize = False
-
 
 posiciones= [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]
 
@@ -150,8 +146,6 @@ print("buscando")
 
 from mpi4py import MPI
 
-MPI.Init()
-
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 
@@ -193,7 +187,6 @@ while True:
     Children = []
 
     Children.append(NewPosition(Children, Matriz))
-    MPI.Finalize()
     for child in Children:
 
 
