@@ -1,4 +1,4 @@
-import Aestrella_MPI
+import AestrellaSERIAL
 from mpi4py import MPI
 import time
 comm = MPI.COMM_WORLD
@@ -12,13 +12,13 @@ rank = comm.Get_rank()
 print("Proceso:"+ str(rank))
 inicio=time.time()
 if(rank==0 ):
-    Aestrella_MPI.A_estrella(1,5,2,9)
+    AestrellaSERIAL.A_estrella(15,0,0,15)
 elif(rank==1 ):
-    Aestrella_MPI.A_estrella(1,5,2,9)
+    AestrellaSERIAL.A_estrella(0,0,15,15)
 elif(rank==2 ):
-    Aestrella_MPI.A_estrella(1,5,2,9)
+    AestrellaSERIAL.A_estrella(0,15,15,15)
 elif(rank==3):
-    Aestrella_MPI.A_estrella(1,5,2,9)
+    AestrellaSERIAL.A_estrella(10,10,15,15)
 fin=time.time()
 
 print("Tiempo:" + str((fin-inicio)))
