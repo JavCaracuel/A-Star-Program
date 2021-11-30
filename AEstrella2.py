@@ -40,11 +40,6 @@ def GetDistance(StartNode, EndNode):
     else:
         return 14*DistX + 10*(DistY - DistX)
 
-    
-    '''
-    return np.sqrt((DistX**2) + (DistY**2))
-    '''
-    
 
 class Node():
     def __init__(self, parent=None):
@@ -207,110 +202,8 @@ while True:
                 
                 NodesSel.append(child)
 
-
-
-        '''
-        for child in Children:                
-            existe = False
-            if child in Nodes:
-                continue
-           
-            NewCost = current_node.g + GetDistance(child, current_node)
-
-            for open_node in NodesSel:                 
-                if child.X == open_node.X and child.Y == open_node.Y:
-                    if NewCost < open_node.g:
-                        open_node.g = NewCost
-                        #child.h = ((child.X - End_Node.X) ** 2) + ((child.Y - End_Node.Y) ** 2)
-                        open_node.h = GetDistance(child, End_Node)
-                        open_node.f = open_node.g + open_node.h
-                        open_node.parent = current_node
-                    existe = True
-                    break
-                    
-
-            if existe == False:
-                child.g = NewCost
-                #child.h = ((child.X - End_Node.X) ** 2) + ((child.Y - End_Node.Y) ** 2)
-                child.h = GetDistance(child, End_Node)
-                child.f = child.g + child.h
-                child.parent = current_node
-                NodesSel.append(child)
-        '''
-        '''   
-        for child in Children:
-                
-                existe = False
-
-                for closed_child in Nodes:
-                    if (current_node.X + new_position[0])== closed_child.X and (current_node.Y + new_position[1]) == closed_child.Y:
-                        continue
-
-                
-                NewCost = current_node.g + GetDistance(child, current_node)
-
-                for open_node in NodesSel:
-                    #if child == open_node and child.g > open_node.g
-                        
-                    if child.X == open_node.X and child.Y == open_node.Y and NewCost >= open_node.g:
-                        existe = True
-                        break
-
-                if existe == False:
-                    child.g = NewCost
-                    #child.h = ((child.X - End_Node.X) ** 2) + ((child.Y - End_Node.Y) ** 2)
-                    child.h = GetDistance(child, End_Node)
-                    child.f = child.g + child.h
-                    child.parent = current_node
-                    NodesSel.append(child)
-        '''
-
-        '''
-            for child in Children:
-
-                if child in Nodes:
-                    continue
-                
-                for closed_child in Nodes:
-                    if child.X == closed_child.X and child.Y == closed_child.Y:
-                        continue
-                        print("------------- Problemas -------------")               
-
-                NewCost = current_node.g + GetDistance(child, current_node)
-                
-                if child not in NodesSel or NewCost < child.g:
-                    child.g = NewCost
-                    child.h = GetDistance(child, End_Node)
-                    child.f = child.g + child.h
-                    child.parent = current_node
-
-                    if child not in NodesSel:
-                        NodesSel.append(child)
-            
-        '''           
-
-        '''
-            for open_node in NodesSel:
-                existe = False
-
-                if child.X == open_node.X and child.Y == open_node.Y and NewCost > open_node.g:
-                    existe = True
-                    continue
-                    print("------------- Problemas -------------")
-                
-            if existe != True:
-                # Create the f, g, and h values
-                child.g = NewCost
-                child.h = GetDistance(child, End_Node)
-                child.f = child.g + child.h
-                child.parent = current_node
-                
-                NodesSel.append(child)
-                
-        '''
         print(len(NodesSel))
-        
-        #print("[ " + str(child.X) + ", " + str(child.Y) + " ]")
+
     gameState = np.copy(newGameState)
     pygame.display.flip()
 
