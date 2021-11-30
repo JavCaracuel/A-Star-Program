@@ -108,9 +108,9 @@ NodesSel.append(Temp)
 print("Inicio:")
 print("Coordenadas nodo inicial:")
 print("X:")
-NodesSel[0].Y = input()
+NodesSel[0].Y = int(input())
 print("Y:")
-NodesSel[0].X = input()
+NodesSel[0].X = int(input())
 
 current_node = NodesSel[0]     
 
@@ -119,9 +119,9 @@ End_Node = Node(None)
 print("Final:")
 print("Coordenadas nodo final:")
 print("X:")
-End_Node.Y = input()
+End_Node.Y = int(input())
 print("Y:")
-End_Node.X = input()
+End_Node.X = int(input())
 
 print("buscando")
 
