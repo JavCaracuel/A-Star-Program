@@ -70,11 +70,14 @@ End_Node.X = input()
 
 print("buscando")
 
+NodesSel[len(Nodes)-1].g = 0
+NodesSel[len(Nodes)-1].h = GetDistance(NodesSel[len(Nodes)-1], End_Node)
+NodesSel[len(Nodes)-1].f = NodesSel[len(Nodes)-1].g + NodesSel[len(Nodes)-1].h
+
+Inicio = time.time()
+
 while True:
 
-    NodesSel[len(Nodes)-1].g = 0
-    NodesSel[len(Nodes)-1].h = GetDistance(NodesSel[len(Nodes)-1], End_Node)
-    NodesSel[len(Nodes)-1].f = NodesSel[len(Nodes)-1].g + NodesSel[len(Nodes)-1].h
 
     current_node = NodesSel[0]  
 
@@ -94,6 +97,7 @@ while True:
     
     
     if current_node.X == End_Node.X and current_node.Y == End_Node.Y:
+        Fin = time.time()
         print("Hemos llegado")
         path=[]
         current = current_node
@@ -103,6 +107,7 @@ while True:
             current = current.parent
         print(path[::-1])
         print(np.array(matriz))
+        print("Tiempo: " + str(Fin-Inicio))
         break
 
     Children = []
@@ -154,3 +159,4 @@ while True:
                 child.f = child.g + child.h
                 child.parent = current_node
                 NodesSel.append(child)
+        #print(len(Nodes))
