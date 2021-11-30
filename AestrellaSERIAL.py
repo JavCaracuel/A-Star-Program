@@ -149,15 +149,15 @@ while True:
         for open_node in NodesSel:                    
             if child.X == open_node.X and child.Y == open_node.Y and NewCost > open_node.g:
                     existe = True
-                    continue
-                    print("------------- Problemas -------------")
-                
-            if existe != True:
-                # Create the f, g, and h values
-                child.g = NewCost
-                child.h = GetDistance(child, End_Node)
-                child.f = child.g + child.h
-                child.parent = current_node
-                
-                NodesSel.append(child)
+                    break
+                        
+                    
+        if existe != True:
+            # Create the f, g, and h values
+            child.g = NewCost
+            child.h = GetDistance(child, End_Node)
+            child.f = child.g + child.h
+            child.parent = current_node
+            
+            NodesSel.append(child)
     print(len(NodesSel))
