@@ -1,12 +1,10 @@
 import numpy as np
 import time
-from mpi4py import MPI
+import numba
+from numba import njit
 
 
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-
-matriz =   [[1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+matriz = [[1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
@@ -23,12 +21,22 @@ matriz =   [[1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
 Nodes = []
 NodesSel = []
 
+@njit()
+def search_children(X,Y, Nodes):
+    esta=0
+    for child in Nodes:
+        if(X == child[0] and Y == child[1]):
+            esta=1
+            break
+    return esta
+
 def GetDistance(StartNode, EndNode):
     DistX = abs(StartNode.X - EndNode.X)
     DistY = abs(StartNode.Y - EndNode.Y)
 
     '''
     return np.sqrt((DistX**2) + (DistY**2))
+
     '''
     
     if DistX > DistY:
@@ -58,9 +66,9 @@ NodesSel.append(Temp)
 print("Inicio:")
 print("Coordenadas nodo inicial:")
 print("X:")
-NodesSel[len(Nodes)-1].Y = 0
+NodesSel[len(Nodes)-1].Y = int(input())
 print("Y:")
-NodesSel[len(Nodes)-1].X = 12
+NodesSel[len(Nodes)-1].X = int(input())
 
 current_node = NodesSel[0]     
 
@@ -69,9 +77,9 @@ End_Node = Node(None)
 print("Final:")
 print("Coordenadas nodo final:")
 print("X:")
-End_Node.Y = 12
+End_Node.Y = int(input())
 print("Y:")
-End_Node.X = 12
+End_Node.X = int(input())
 
 print("buscando")
 
@@ -82,7 +90,8 @@ NodesSel[len(Nodes)-1].f = NodesSel[len(Nodes)-1].g + NodesSel[len(Nodes)-1].h
 Inicio = time.time()
 
 while True:
-
+    lista=[]
+    lista=np.array(lista)
 
     current_node = NodesSel[0]  
 
@@ -98,7 +107,9 @@ while True:
                 pos = index
 
     NodesSel.pop(pos)
-    Nodes.append(current_node)
+    np.append(lista,current_node.X)
+    np.append(lista,current_node.Y)
+    Nodes.append(lista)
     
     
     if current_node.X == End_Node.X and current_node.Y == End_Node.Y:
@@ -138,77 +149,29 @@ while True:
             New_Node.Y = current_node.Y + new_position[1]
             Children.append(New_Node)
         '''
+    for child in Children:
+            
+        existe = False
+        pepe = np.array(Nodes)
+        if(search_children(child.X,child.Y, pepe)==1):
+            continue
 
-        for child in Children:
+        NewCost = current_node.g + GetDistance(child, current_node)
+
+        for open_node in NodesSel:                    
+            if child.X == open_node.X and child.Y == open_node.Y:
+                if NewCost < open_node.g:
+                    open_node.g = NewCost
+                    open_node.h = GetDistance(child, End_Node)
+                    open_node.f = open_node.g + open_node.h
+                    open_node.parent = current_node
+                existe = True
+                break
                 
-            existe = False
-            division=int(len(Nodes)/4)
-            if rank == 0:
-                esta=False
-                for item in Nodes[0:division]:
-                   
-                    if(child.X==item.X and child.Y==item.Y):
-                        esta=True
-                        break
-                    else:
-                        esta=False
-                comm.send(esta, dest=4, tag=10)
-
-            elif rank == 1:
-                esta=False
-                for item in Nodes[division+1:division*2]:
-                    if(child.X==item.X and child.Y==item.Y):
-                        esta=True
-                        break
-                    else:
-                        esta=False
-                comm.send(esta, dest=4, tag=11)
-            elif rank == 2:
-                esta=False
-                for item in Nodes[division*2+1:division*3]:
-                    if(child.X==item.X and child.Y==item.Y):
-                        esta=True
-                        break
-                    else:
-                        esta=False
-                comm.send(esta, dest=4, tag=12)
-
-            elif rank == 3:
-                esta=False
-                for item in Nodes[division*3+1:]:
-                    if(child.X==item.X and child.Y==item.Y):
-                        esta=True
-                        break
-                    else:
-                        esta=False
-                    
-                comm.send(esta, dest=4, tag=13)
-
-            elif rank == 4:
-                esta0 = comm.recv(source=0,tag=10)
-                esta1 = comm.recv(source=1,tag=11)
-                esta2 = comm.recv(source=2,tag=12)
-                esta3 = comm.recv(source=3,tag=13)
-
-                if(esta0==True or esta1==True or esta2==True or esta3==True):
-                    continue
-         
-            NewCost = current_node.g + GetDistance(child, current_node)
-
-            for open_node in NodesSel:                    
-                if child.X == open_node.X and child.Y == open_node.Y:
-                    if NewCost < open_node.g:
-                        open_node.g = NewCost
-                        open_node.h = GetDistance(child, End_Node)
-                        open_node.f = open_node.g + open_node.h
-                        open_node.parent = current_node
-                    existe = True
-                    break
-                    
-            if existe == False:
-                child.g = NewCost
-                child.h = GetDistance(child, End_Node)
-                child.f = child.g + child.h
-                child.parent = current_node
-                NodesSel.append(child)
-        #print(len(Nodes))
+        if existe == False:
+            child.g = NewCost
+            child.h = GetDistance(child, End_Node)
+            child.f = child.g + child.h
+            child.parent = current_node
+            NodesSel.append(child)
+    #print(len(Nodes))

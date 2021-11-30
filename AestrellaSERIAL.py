@@ -53,9 +53,9 @@ NodesSel.append(Temp)
 print("Inicio:")
 print("Coordenadas nodo inicial:")
 print("X:")
-NodesSel[len(Nodes)-1].Y = input()
+NodesSel[len(Nodes)-1].Y = int(input())
 print("Y:")
-NodesSel[len(Nodes)-1].X = input()
+NodesSel[len(Nodes)-1].X = int(input())
 
 current_node = NodesSel[0]     
 
@@ -64,9 +64,9 @@ End_Node = Node(None)
 print("Final:")
 print("Coordenadas nodo final:")
 print("X:")
-End_Node.Y = input()
+End_Node.Y = int(input())
 print("Y:")
-End_Node.X = input()
+End_Node.X = int(input())
 
 print("buscando")
 
@@ -79,7 +79,7 @@ Inicio = time.time()
 while True:
 
 
-    current_node = NodesSel[0]  
+    current_node = NodesSel[0] 
 
     pos = 0
 
@@ -134,29 +134,30 @@ while True:
             Children.append(New_Node)
         '''
 
-        for child in Children:
-                
-            existe = False
-
-            if child in Nodes:
-                continue
+    for child in Children:
             
-            NewCost = current_node.g + GetDistance(child, current_node)
+        existe = False
+        for i in Nodes:
+            if child.X == i.X and child.Y == i.Y:
+                existe=True
+                break
 
-            for open_node in NodesSel:                    
-                if child.X == open_node.X and child.Y == open_node.Y:
-                    if NewCost < open_node.g:
-                        open_node.g = NewCost
-                        open_node.h = GetDistance(child, End_Node)
-                        open_node.f = open_node.g + open_node.h
-                        open_node.parent = current_node
+        if existe:
+            continue
+        NewCost = current_node.g + GetDistance(child, current_node)
+
+        for open_node in NodesSel:                    
+            if child.X == open_node.X and child.Y == open_node.Y and NewCost > open_node.g:
                     existe = True
-                    break
-                    
-            if existe == False:
+                    continue
+                    print("------------- Problemas -------------")
+                
+            if existe != True:
+                # Create the f, g, and h values
                 child.g = NewCost
                 child.h = GetDistance(child, End_Node)
                 child.f = child.g + child.h
                 child.parent = current_node
+                
                 NodesSel.append(child)
-        #print(len(Nodes))
+    print(len(NodesSel))
