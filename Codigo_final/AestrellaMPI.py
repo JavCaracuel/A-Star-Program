@@ -1,7 +1,10 @@
 import numpy as np
 import time
+import os
 
-matriz_4r = [[1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+import csv
+
+matriz = [[1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
@@ -45,7 +48,7 @@ matriz_34 = [[1, 1, 1, 1, 1, 1,  1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
-matriz = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+matriz2 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -133,26 +136,23 @@ Inicio = time.time()
 
 while True:
 
-
-
     current_node = NodesSel[0]  
 
     pos = 0
 
     #current_node = min(NodesSel, key=lambda o:o.f)
     
-    for index, item in enumerate(NodesSel):
-        if item.f < current_node.f:
-            current_node = item
-            pos = index
-        elif item.f == current_node.f:
-            if item.h < current_node.h:
-                current_node = item
-                pos = index
+# data rows of csv file 
+ 
+    with open('data.csv', 'w',) as csvfile:
+        writer = csv.writer(csvfile)
+        for index, item in enumerate(NodesSel):
+            writer.writerow([index, item.f, item.h])
     
-
-    NodesSel.pop(pos)
-    Nodes.append(current_node)
+    output=os.popen('mpiexec -n 5 python A_Estrella_MPI/MPI_parallel.py').read()
+    print('output:',output)
+    Nodes.append(NodesSel[int(output)])
+    NodesSel.pop(int(output))
     
     
     if current_node.X == End_Node.X and current_node.Y == End_Node.Y:
