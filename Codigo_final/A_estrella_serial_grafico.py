@@ -20,7 +20,7 @@ gameState = np.zeros((nxC, nyC))
 pauseExect = True
 Started = False
 
-
+pepe=2
 EndX = 0
 EndY = 0
 
